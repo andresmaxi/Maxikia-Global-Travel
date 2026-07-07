@@ -130,6 +130,20 @@ body.detail-open #home,body.detail-open .foot-home{display:none}
 .hbtn{padding:.5em 1.1em;font-size:.85rem}
 .hnone{color:var(--mute);font-size:.95rem;background:var(--sand);border-radius:12px;padding:16px}
 @media(max-width:700px){.hgrid{grid-template-columns:1fr}}
+.hblock{display:grid;grid-template-columns:1.5fr .75fr;gap:20px;background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:22px;box-shadow:0 12px 30px -26px rgba(26,58,107,.5)}
+.hstage{border-radius:14px;overflow:hidden;background:var(--navy-dk);display:flex;flex-direction:column}
+.hmediabox{position:relative;aspect-ratio:16/9;background:var(--navy-dk)}.hmediabox svg,.hmediabox img,.hmediabox video{width:100%;height:100%;object-fit:cover}.hmediabox iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.hcap{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 15px;background:var(--navy);color:#fff}
+.hcap b{font-family:var(--disp);font-size:1.05rem}.hcap span{color:#c9d6ea;font-size:.83rem;display:block}
+.hcap em{font-style:normal;font-family:var(--disp);font-weight:700;color:var(--sun);white-space:nowrap}
+.hcap .rbtn{padding:.5em 1em;font-size:.82rem;white-space:nowrap}
+.hside{display:flex;flex-direction:column;min-width:0}
+.hdest{font-family:var(--disp);font-weight:700;color:var(--navy);font-size:1.12rem;margin-bottom:12px;padding-bottom:10px;border-bottom:2px solid var(--sand)}
+.hnames{display:flex;flex-direction:column;gap:8px;overflow:auto;max-height:340px}
+.hname{text-align:left;background:var(--cream);border:1.5px solid var(--line);border-radius:11px;padding:.7em .9em;font-family:var(--disp);font-weight:600;font-size:.9rem;color:var(--navy);cursor:pointer;transition:all .15s}
+.hname:hover{border-color:var(--orange);color:var(--orange-dk)}
+.hname.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+@media(max-width:760px){.hblock{grid-template-columns:1fr}.hnames{max-height:220px}}
 .incl{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:4px}
 .incl li{display:flex;gap:8px;align-items:flex-start;font-size:.93rem}.incl li .ck{color:var(--orange-dk);font-weight:800}
 .qbox{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:var(--shadow);position:sticky;top:98px}
