@@ -41,6 +41,7 @@ header.solid .brand .wm small{color:var(--orange-dk)}
 .hero-bg{position:absolute;inset:0;z-index:0}.hero-bg svg,.hero-bg img,.hero-bg video{width:100%;height:100%;object-fit:cover}
 .card .scene iframe,.hero-bg iframe,.detail-hero iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .card .scene iframe,.hero-bg iframe{pointer-events:none}
+.hero-bg iframe{position:absolute;top:50%;left:50%;width:max(100%,177.78vh);height:max(100%,56.25vw);transform:translate(-50%,-50%);border:0}
 .hero-veil{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(18,41,77,.58) 0%,rgba(18,41,77,.14) 26%,rgba(18,41,77,0) 42%,rgba(18,41,77,.72) 100%)}
 .hero-inner{position:relative;z-index:2;width:100%;padding-bottom:50px}
 .hero .eyebrow{color:var(--sun)}
@@ -393,12 +394,20 @@ function setLang(l){LANG=l;document.querySelectorAll('[data-i]').forEach(functio
 DEST=loadData();
 function loadCfg(){try{return JSON.parse(localStorage.getItem('mgt_cfg'))||{};}catch(e){return {};}}
 function applyHero(){var c=loadCfg(),el=document.getElementById("heroScene");if(c.heroType==='video'&&c.heroVidKey){el.innerHTML='<video data-vk="'+c.heroVidKey+'" autoplay muted loop playsinline></video>';hydrateVideos(el);}else if(c.heroType==='video'&&c.heroVideo){el.innerHTML=videoMarkup(c.heroVideo);}else if(c.heroType==='image'&&c.heroImg){el.innerHTML='<img src="'+c.heroImg+'">';}else{el.innerHTML=scene("island");}}
-applyHero();
+var DEFAULT_REELS=["https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4","https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4","https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"];
+var _reels=[],_rpos=0,_ytP=null;
+function _shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function startHero(){var c=loadCfg();var cu=(c.heroReels&&c.heroReels.length)?c.heroReels.filter(Boolean):null;if(cu&&cu.length){_reels=_shuffle(cu.slice());_rpos=0;playReel();return;}if(c.heroType==="image"||c.heroType==="video"){applyHero();return;}var d=DEFAULT_REELS.filter(Boolean);if(d.length){_reels=_shuffle(d.slice());_rpos=0;playReel();return;}applyHero();}
+function nextReel(){if(!_reels.length)return;_rpos++;if(_rpos>=_reels.length){_shuffle(_reels);_rpos=0;}playReel();}
+function playReel(){var el=document.getElementById("heroScene");if(!el)return;var url=_reels[_rpos];var yt=ytId(url);if(yt){el.innerHTML='<div id="heroYT"></div>';_ensureYT(function(){_mkYT(yt);});}else{el.innerHTML='<video id="heroVid" autoplay muted playsinline></video>';var v=document.getElementById("heroVid");v.src=url;v.onended=nextReel;v.onerror=nextReel;var pr=v.play&&v.play();if(pr&&pr.catch)pr.catch(function(){});}}
+function _mkYT(id){try{if(_ytP&&_ytP.destroy)_ytP.destroy();}catch(e){}_ytP=new YT.Player("heroYT",{videoId:id,playerVars:{autoplay:1,mute:1,controls:0,playsinline:1,modestbranding:1,rel:0,fs:0},events:{onReady:function(e){try{e.target.playVideo();}catch(x){}},onStateChange:function(e){if(e.data===0)nextReel();},onError:function(){nextReel();}}});}
+function _ensureYT(cb){if(window.YT&&window.YT.Player){cb();return;}window._ytCbs=window._ytCbs||[];window._ytCbs.push(cb);if(window._ytLoad)return;window._ytLoad=1;var t=document.createElement("script");t.src="https://www.youtube.com/iframe_api";document.head.appendChild(t);window.onYouTubeIframeAPIReady=function(){(window._ytCbs||[]).forEach(function(f){f();});window._ytCbs=[];};}
+startHero();
 renderFilters();renderGrid();fillSelect();
 (function(){var l='es';try{l=localStorage.getItem('mgt_lang')||'es';}catch(e){}setLang(l);})();
 var hdr=document.getElementById("hdr");addEventListener("scroll",function(){hdr.classList.toggle("solid",scrollY>60);});
 var hb=document.getElementById('hotelBlocks');if(hb)hb.addEventListener('click',function(e){var t=e.target;var b=t.closest?t.closest('.hname'):null;if(b){playHotel(b.getAttribute('data-hd'),+b.getAttribute('data-hi'));return;}var r=t.closest?t.closest('.rbtn'):null;if(r&&r.getAttribute('data-hd')!=null){reservarHotelById(r.getAttribute('data-hd'),+r.getAttribute('data-hi'));}});
 var nt=document.getElementById('nicheTabs');if(nt)nt.addEventListener('click',function(e){var b=e.target.closest?e.target.closest('.ntab'):null;if(b)setNiche(b.getAttribute('data-n'));});
 addEventListener("keydown",function(e){if(e.key==="Escape")closeModal();});
-addEventListener("storage",function(e){if(e.key==='mgt_dest'){DEST=loadData();renderGrid();fillSelect();renderHotelSection();}if(e.key==='mgt_cfg'){applyHero();}});
+addEventListener("storage",function(e){if(e.key==='mgt_dest'){DEST=loadData();renderGrid();fillSelect();renderHotelSection();}if(e.key==='mgt_cfg'){startHero();}});
 </script></body></html>
